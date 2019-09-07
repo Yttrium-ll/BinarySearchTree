@@ -89,14 +89,18 @@ class binaryTree
 	bool isRootEmpty;
 	
 	//PRIVATE FUNC
-	branch<tpk1, tpd1>* srch_bts(tpk1 key)
+	branch<tpk1, tpd1>* srch_bts(tpk1 key, branch<tpk1, tpd1>** parent=nullptr)
 	{ if (isRootEmpty) return NULL;
 	branch<tpk1, tpd1>* br_ptr=root;
+	*parent=root;
 	do { if (br_ptr->get_key()==key)
 	{ return br_ptr; }
 		if ((br_ptr->key>key)&&(br_ptr->left))
-		{ br_ptr=br_ptr->left; }
-		else if ((br_ptr->key<key) && (br_ptr->right)) { br_ptr=br_ptr->right; }
+		{ if (parent) *parent=br_ptr; 
+		 br_ptr=br_ptr->left; }
+		else if ((br_ptr->key<key) && (br_ptr->right)) 
+		{ if (parent) *parent=br_ptr; 
+		br_ptr=br_ptr->right; }
 		else break;
 	} while (true);
 	return NULL; }
