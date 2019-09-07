@@ -33,8 +33,7 @@ class branch
 	
 	//PRIVATE FUNC
 	void add(tpk in_key, tpd in_data, char mod)
-	{
-		branch<tpk, tpd>*  tmp = new branch<tpk, tpd>;
+	{ branch<tpk, tpd>*  tmp = new branch<tpk, tpd>;
 	tmp->init(in_key, in_data, heigh+1); ++weight;
 	switch (mod) 
 	{ case 'r': right=tmp; break; 
@@ -42,8 +41,7 @@ class branch
 		default: break; } }
 		
 	void add_bts_rec(tpk in_key, tpd in_data)
-	{ static vector<branch<tpk, tpd>*> stack;
-		 if (key>in_key) { if (left) { ++weight;
+	{ if (key>in_key) { if (left) { ++weight;
 	 left->add_bts_rec(in_key, in_data); }
 	else add(in_key, in_data, 'l'); }
 	else { if (right) { ++weight;  right->add_bts_rec(in_key, in_data); }
@@ -87,37 +85,42 @@ class binaryTree
 	friend class btIterator<tpk1, tpd1>;
 	private:
 	//FIELDS
-	branch<tpk1, tpd1> root;
+	branch<tpk1, tpd1>* root;
 	bool isRootEmpty;
 	
 	//PRIVATE FUNC
-	branch<tpk1, tpd1>* srch_bts(tpk1 key)
+	branch<tpk1, tpd1>* srch_bts(tpk1 key, branch<tpk1, tpd1>** parent=nullptr)
 	{ if (isRootEmpty) return NULL;
-	branch<tpk1, tpd1>* br_ptr=&root;
+	branch<tpk1, tpd1>* br_ptr=root;
+	*parent=root;
 	do { if (br_ptr->get_key()==key)
 	{ return br_ptr; }
 		if ((br_ptr->key>key)&&(br_ptr->left))
-		{ br_ptr=br_ptr->left; }
-		else if ((br_ptr->key<key) && (br_ptr->right)) { br_ptr=br_ptr->right; }
+		{ if (parent) *parent=br_ptr; 
+		 br_ptr=br_ptr->left; }
+		else if ((br_ptr->key<key) && (br_ptr->right)) 
+		{ if (parent) *parent=br_ptr; 
+		br_ptr=br_ptr->right; }
 		else break;
 	} while (true);
 	return NULL; }
 	
 	public:
 	//CONSTRUCTORS
-	binaryTree(){ isRootEmpty=true; }
+	binaryTree(){ isRootEmpty=true; 
+	root=new branch<tpk1, tpd1>; }
 	~binaryTree()
-	{ cout << "destructor report: undefined fail, deleting aborted\n";
-	/*vector<branch<tpk1, tpd1>*> tmp;
+	{ cout << "destructor report\n";
+	vector<branch<tpk1, tpd1>*> tmp;
 	for (btIterator<tpk1, tpd1> bti(this); bti.isOK(); bti++) tmp.push_back(bti.get_ptr());
 	for (branch<tpk1, tpd1>* br: tmp)  
-	{ cout << br <<  endl; delete br; } */}
+	{ cout << br <<  endl; delete br; } }
 	
 	//PUBLIC FUNC
 	void add(tpk1 newKey, tpd1 newData)
-	{ branch<tpk1, tpd1>* ptr = &root;
+	{ branch<tpk1, tpd1>* ptr = root;
 	if (isRootEmpty)
-	{ root.init(newKey, newData, 0); isRootEmpty=false; return; };
+	{ root->init(newKey, newData, 0); isRootEmpty=false; return; };
 	while (ptr->weight>1)
 	{ if (!(ptr->right && ptr->left)) break;
 	if (ptr->right->weight > ptr->left->weight) ptr=ptr->left;
@@ -126,8 +129,8 @@ class binaryTree
 	else ptr->add(newKey, newData, 'l'); }
 	
 	void add_bts(tpk1 newKey, tpd1 newData) { if (isRootEmpty)
-	{ root.init(newKey, newData, 0); isRootEmpty=false; return; }
-		root.add_bts_rec(newKey, newData); }
+	{ root->init(newKey, newData, 0); isRootEmpty=false; return; }
+		root->add_bts_rec(newKey, newData); }
 	
 	void print(bool all=false)
 	{ for (btIterator<tpk1, tpd1> bti(this); bti.isOK(); bti++) bti.get_ptr()->print(all);}
@@ -186,7 +189,7 @@ class btIterator
 	
 	//PUBLIC FUNC
 	btIterator(binaryTree<tpk2, tpd2>* bt)
-	{ owner=bt; ptr=&(owner->root); stat=OK; }
+	{ owner=bt; ptr=owner->root; stat=OK; }
 	
 	inline void operator++(int n) { next(); }
 	
