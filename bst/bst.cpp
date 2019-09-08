@@ -1,7 +1,5 @@
 // bst.cpp: определяет точку входа для консольного приложения.
 //
-
-#include "stdafx.h"
 #include "binaryTree.h"
 
 int main()
@@ -36,6 +34,11 @@ int main()
 		}
 		else if (input == "print")
 			yggdrassil.print(true);
+		else if (input == "delete")
+		{
+			cin >> tmp;
+			cout << "del return " << yggdrassil.del(tmp);
+		}
 		else if (input == "exit") break;
 		else cout << "no such command\n";
 		cout << endl;
@@ -43,4 +46,3 @@ int main()
 	cout << "end\n";
     return 0;
 }
-
