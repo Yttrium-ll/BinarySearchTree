@@ -92,7 +92,7 @@ class binaryTree
 	branch<tpk1, tpd1>* srch_bts(tpk1 key, branch<tpk1, tpd1>** parent=nullptr)
 	{ if (isRootEmpty) return NULL;
 	branch<tpk1, tpd1>* br_ptr=root;
-	*parent=root;
+	if (parent)  *parent=root; 
 	do { if (br_ptr->get_key()==key)
 	{ return br_ptr; }
 		if ((br_ptr->key>key)&&(br_ptr->left))
@@ -139,17 +139,23 @@ class binaryTree
 		if (bti.get_ptr()->get_key()==key) return bti.get_ptr()->get_data(); return NULL;
 	}
 	
-	tpd1 search_bts(tpk1 key)
+	tpd1 search_bts(tpk1 key, int& err)
 	{ branch<tpk1, tpd1>* tmp=srch_bts(key); 
-	if (tmp) return tmp->get_data();
-	else return NULL; }
+	if (tmp) { err=OK; return tmp->get_data(); }
+	else  { err=NOTFOUND; return NULL; } }
 	
 	int del(tpk1 key)
 	{ branch<tpk1, tpd1>* prnt;
 	branch<tpk1, tpd1>* tmp=srch_bts(key, &prnt); 
 		if (tmp)
-		{ 
-			cout << "deleting " << tmp << "; his parent " << prnt << endl;
+		{ // loosing tmps childs
+		// to do: reweighting ??? reheighing ???
+			if (prnt->left==tmp) prnt->left=nullptr;
+			 else if (prnt->right==tmp) prnt->right=nullptr;
+			if (tmp->left) 
+			  add_bts(tmp->left->key, tmp->left->data);
+			if (tmp->right) 
+			  add_bts(tmp->right->key, tmp->right->data);
 			return OK;
 		}
 		else return NOTFOUND;

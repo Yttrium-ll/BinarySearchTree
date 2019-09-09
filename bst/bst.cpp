@@ -6,7 +6,7 @@ int main()
 {
 	cout << "hi" << endl;
 	binaryTree<int, char> yggdrassil;
-	int tmp;
+	int tmp, err=OK;
 	char ch;
 	string input;
 	for (int i = 0; i<5; ++i)
@@ -28,9 +28,9 @@ int main()
 		else if (input == "search")
 		{
 			cin >> tmp;
-			ch = yggdrassil.search_bts(tmp);
-			if (ch) cout << "res: " << ch << endl;
-			else cout << "no such elem\n";
+			ch = yggdrassil.search_bts(tmp, err);
+			if (err==OK) cout << "res: " << ch << endl;
+			else cout << "error code: " << err << endl;
 		}
 		else if (input == "print")
 			yggdrassil.print(true);
@@ -38,6 +38,8 @@ int main()
 		{
 			cin >> tmp;
 			cout << "del return " << yggdrassil.del(tmp);
+			cout << "\n----- tree after changing -----\n";
+			yggdrassil.print();
 		}
 		else if (input == "exit") break;
 		else cout << "no such command\n";
